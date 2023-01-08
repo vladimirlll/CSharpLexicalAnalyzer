@@ -8,16 +8,16 @@ namespace Lex.Models.Exceptions.SettingExceptions
 {
     class CodeReadingException : LexAnException
     {
-        public new static string GetDefaultExStr()
+        private const string MSG = "Ошибка при чтении кода из файла";
+        public string CodeFileName { get; private set; }
+        public CodeReadingException(string fileName) : base(MSG)
         {
-            const string EXSTRBASE = "Ошибка при чтении кода из файла ";
-            return EXSTRBASE;
+            CodeFileName = fileName;
         }
 
-        public string CodeFileName { get; private set; }
-        public CodeReadingException(string errorCodeFileName) : base()
+        public override string GetMessage()
         {
-            CodeFileName = errorCodeFileName;
+            return MSG + " - " + CodeFileName;
         }
     }
 }

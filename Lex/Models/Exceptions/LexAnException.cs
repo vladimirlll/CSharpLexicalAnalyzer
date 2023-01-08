@@ -8,10 +8,8 @@ namespace Lex.Models.Exceptions
 {
     abstract class LexAnException : Exception 
     {
-        private const string EXSTR = "Ошибка в работе лексического анализатора";
+        public LexAnException(string msg) : base(msg) { }
 
-        public static string GetDefaultExStr() { return EXSTR; }
-
-        public LexAnException() : base(GetDefaultExStr()) { }
+        public abstract string GetMessage();
     }
 }

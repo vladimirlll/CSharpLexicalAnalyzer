@@ -9,16 +9,17 @@ namespace Lex.Models.Exceptions.SettingExceptions
 {
     class TransitionTableReadingException : LexAnException
     {
-        public new static string GetDefaultExStr()
-        {
-            const string EXSTRBASE = "Ошибка при чтении таблицы переходов из файла ";
-            return EXSTRBASE;
-        }
+        private const string MSG = "Ошибка при чтении таблицы переходов из файла";
 
         public string TransitionTableFileName { get; private set; }
-        public TransitionTableReadingException(string errorTransTableFileName) : base()
+        public TransitionTableReadingException(string fileName) : base(MSG)
         {
-            TransitionTableFileName = errorTransTableFileName;
+            TransitionTableFileName = fileName;
+        }
+
+        public override string GetMessage()
+        {
+            return MSG + " - " + TransitionTableFileName;
         }
     }
 }

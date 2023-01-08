@@ -8,8 +8,15 @@ namespace Lex.Models
 {
     class Token
     {
-        TokenType type;
-        string lexem;
-        string attribute;
+        public TokenType Type { get; }
+        public string Lexem { get; }
+        public string Attribute { get; }
+
+        public Token(TokenType tokenType, string lexem, string attribute = "")
+        {
+            Type = tokenType;
+            Lexem = lexem;
+            Attribute = attribute;
+        }
     }
 }
