@@ -14,6 +14,7 @@ namespace Lex.Models
         RealLiteral,
         CharacterLiteral,
         StringLiteral,
-        OperatorOrPunctuator
+        Operator,
+        Punctuator
     }
 }

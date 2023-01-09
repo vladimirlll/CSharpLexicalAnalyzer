@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Lex.Models.Exceptions.SettingExceptions;
-using Lex.Models.SymbolHandlers;
+using Lex.Models.InputSymbols;
 using Lex.Models.Exceptions.AnalyzeExceptions;
 
 namespace Lex.Models
@@ -14,12 +14,12 @@ namespace Lex.Models
     {
         public string Program { get; private set; }
         public List<Token> Tokens { get; private set; }
-        public string currentLexem { get; private set; }
+        public string ReadingLexem { get; private set; }
         private List<List<int>> transitionTable;
         public int pos { get; private set; }
-        private const int StartState = 0;
+        private const int START_STATE = 0;
         public int CurrentState { get; private set; }
-        public int CurrentlyRedingRowNum { get; private set; }
+        public int LineNum { get; private set; }
         /*private List<int> finalStates = new List<int>()
         {
             2, 4, 6, 10, 
@@ -98,9 +98,9 @@ namespace Lex.Models
             transitionTable = ReadTransitionTable(transitionTableFileName);
             Tokens = new List<Token>();
             pos = 0;
-            CurrentlyRedingRowNum = 1;
-            CurrentState = StartState;
-            currentLexem = "";
+            LineNum = 1;
+            CurrentState = START_STATE;
+            ReadingLexem = "";
         }
 
         private TokenType GetTokenTypeOfCurrentState()
@@ -133,7 +133,7 @@ namespace Lex.Models
                     case (int)FinalStates.LogicalOrBitMult:
                     case (int)FinalStates.LogicalOrBitSum:
                     case (int)FinalStates.Negative:
-                        return TokenType.OperatorOrPunctuator;
+                        return TokenType.Operator;
 
                     case (int)FinalStates.StringLiteral:
                         return TokenType.StringLiteral;
@@ -147,45 +147,44 @@ namespace Lex.Models
                         return TokenType.RealLiteral;
 
                     case (int)FinalStates.Punctuator:
-                        return TokenType.OperatorOrPunctuator;
+                        return TokenType.Punctuator;
 
                     default:
-                        throw new Exception("Текущее состояние не является заключительным");
+                        throw new NotFinishStateException(this);
                 }
             }
-            else throw new Exception("Текущее состояние не является заключительным");
+            else throw new NotFinishStateException(this);
         }
 
         public void Analyze()
         {
-            currentLexem = "";
+            ReadingLexem = "";
             while (pos != Program.Length)
             {
                 SymbolClass SC = SymbolClassHandler.GetSymbolClass(Program[pos]);
-                if (Program[pos] == '\n') CurrentlyRedingRowNum++;
+                if (Program[pos] == '\n') LineNum++;
                 int oldState = CurrentState;
                 CurrentState = transitionTable[CurrentState][(int)SC];
-                if(oldState == CurrentState || oldState == StartState)
-                    currentLexem += Program[pos];
+                if(oldState == CurrentState || oldState == START_STATE)
+                    ReadingLexem += Program[pos];
                 if (Enum.IsDefined(typeof(FinalStates), CurrentState))
                 {
                     if(CurrentState != (int)FinalStates.Comment && CurrentState != (int)FinalStates.WSEnd)
                     {
                         TokenType type = GetTokenTypeOfCurrentState();
-                        if (CurrentState == (int)FinalStates.ID && keywords.Contains(currentLexem))
+                        if (CurrentState == (int)FinalStates.ID && keywords.Contains(ReadingLexem))
                             type = TokenType.Keyword;
 
-                        Tokens.Add(new Token(type, currentLexem, "Номер строки - " + CurrentlyRedingRowNum));
+                        Tokens.Add(new Token(type, ReadingLexem, "Номер строки - " + LineNum));
 
-                        if (currentLexem.Length == 1 && Program[pos] == currentLexem[0]) pos++;
+                        if (ReadingLexem.Length == 1 && Program[pos] == ReadingLexem[0]) pos++;
                     }
-                    currentLexem = "";
-                    CurrentState = StartState;
+                    ReadingLexem = "";
+                    CurrentState = START_STATE;
                 }
-                else if (CurrentState < StartState) throw new UnavailableTransitionException(this);
+                else if (CurrentState < START_STATE) throw new UnavailableTransitionException(this);
                 else
                 {
-                    //currentLexem += Program[pos];
                     pos++;
                 }
 

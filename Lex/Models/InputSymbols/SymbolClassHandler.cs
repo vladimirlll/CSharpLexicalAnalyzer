@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lex.Models.SymbolHandlers
+namespace Lex.Models.InputSymbols
 {
     static class SymbolClassHandler
     {

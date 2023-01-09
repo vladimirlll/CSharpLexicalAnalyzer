@@ -44,14 +44,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ee.cs" />
+    <Compile Include="Models\Exceptions\AnalyzeExceptions\NotFinishStateException.cs" />
     <Compile Include="Models\Exceptions\AnalyzeExceptions\UnavailableTransitionException.cs" />
     <Compile Include="Models\FinalState.cs" />
-    <Compile Include="Models\SymbolHandlers\SymbolClass.cs" />
+    <Compile Include="Models\InputSymbols\SymbolClass.cs" />
     <Compile Include="Models\Exceptions\LexAnException.cs" />
     <Compile Include="Models\Exceptions\SettingExceptions\CodeReadingException.cs" />
     <Compile Include="Models\Exceptions\SettingExceptions\TransitionTableReadingException.cs" />
     <Compile Include="Models\LexicalAnalyzer.cs" />
-    <Compile Include="Models\SymbolHandlers\SymbolClassHandler.cs" />
+    <Compile Include="Models\InputSymbols\SymbolClassHandler.cs" />
     <Compile Include="Models\Token.cs" />
     <Compile Include="Models\TokenType.cs" />
     <Compile Include="Program.cs" />
@@ -61,7 +62,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\Utils\" />
     <Folder Include="Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

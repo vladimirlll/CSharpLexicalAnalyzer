@@ -18,9 +18,9 @@ namespace Lex.Models.Exceptions.AnalyzeExceptions
         {
             State = la.CurrentState;
             Symbol = la.Program[la.pos];
-            ReadingLexem = la.currentLexem;
+            ReadingLexem = la.ReadingLexem;
             PosInCode = la.pos;
-            LineNum = la.CurrentlyRedingRowNum;
+            LineNum = la.LineNum;
         }
 
         public override string GetMessage()

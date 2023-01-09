@@ -19,7 +19,7 @@ Percent = %
 Exclamation = !
 VerticalLine = |
 Punctuator = [{}[]().,:;]
-Any = /./
+Other = Любые другие символы
 
 
 
