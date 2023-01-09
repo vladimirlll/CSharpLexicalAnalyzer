@@ -30,6 +30,7 @@ namespace Lex.Models.SymbolHandlers
         Percent,
         Exclamation,
         VerticalLine,
+        Dot,
         Punctuator,
         WS,
         Other

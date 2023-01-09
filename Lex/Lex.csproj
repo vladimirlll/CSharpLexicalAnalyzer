@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ee.cs" />
     <Compile Include="Models\Exceptions\AnalyzeExceptions\UnavailableTransitionException.cs" />
     <Compile Include="Models\FinalState.cs" />
     <Compile Include="Models\SymbolHandlers\SymbolClass.cs" />

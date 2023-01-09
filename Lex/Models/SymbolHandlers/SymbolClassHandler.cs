@@ -14,9 +14,9 @@ namespace Lex.Models.SymbolHandlers
             else if (c == '1') return SymbolClass.One;
             else if (char.IsDigit(c) && c != '0' && c != '1') return SymbolClass.TwoToNine;
             else if (c == 'x' || c == 'X') return SymbolClass.HexPrefix;
-            else if ("ABCDFabcdf".Contains(c)) return SymbolClass.LetterHexDigit;
             else if (c == 'b' || c == 'B') return SymbolClass.BinPrefix;
-            else if (char.IsLetter(c)) return SymbolClass.Letter;
+            else if ("ABCDFabcdf".Contains(c)) return SymbolClass.LetterHexDigit;
+            else if (char.IsLetter(c)) return SymbolClass.Letter; 
             else if (c == '_') return SymbolClass.Underscore;
             else if (c == '+') return SymbolClass.Plus;
             else if (c == '-') return SymbolClass.Minus;
@@ -31,6 +31,7 @@ namespace Lex.Models.SymbolHandlers
             else if (c == '%') return SymbolClass.Percent;
             else if (c == '!') return SymbolClass.Exclamation;
             else if (c == '|') return SymbolClass.VerticalLine;
+            else if (c == '.') return SymbolClass.Dot;
             else if (c == '[' || c == ']' || c == '{' || c == '}' || c == '(' || c == ')' ||
                 c == '.' || c == ',' || c == ':' || c == ';') return SymbolClass.Punctuator;
             else if (char.IsWhiteSpace(c)) return SymbolClass.WS;

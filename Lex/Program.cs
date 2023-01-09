@@ -14,6 +14,7 @@ namespace Lex
     {
         static void Main(string[] args)
         {
+            int a = 10;
             try
             {
                 LexicalAnalyzer LA = new LexicalAnalyzer("test.cs", "tt.txt");
