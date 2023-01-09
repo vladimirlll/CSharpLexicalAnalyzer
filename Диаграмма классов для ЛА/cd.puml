@@ -1,0 +1,48 @@
+@startuml "cd"
+
+enum TokenType
+{
+
+}
+
+class Token
+{
+    TokenType type
+    string lexem 
+    string attribute
+}
+
+Token *-- TokenType
+
+class LexicalAnalyzer 
+{
+    string code 
+    int pos
+    int currentState
+    Token[0..*] tokens
+    string[] keywords
+    int[][] transitionTable
+    -void ReadTransitionTable(string fileName)
+    void Analyze(string code)
+    Token[] GetTokens()
+}
+
+LexicalAnalyzer *-- Token 
+
+class LexicalAnalyzerView
+{
+    TokenType currentState
+    string currentReadingLexem
+    LexicalAnalyzer LA 
+    void OutToConsole()
+    void OutToFile()
+}
+
+LexicalAnalyzerView o-left- LexicalAnalyzer
+
+enum SymbolClass
+{
+
+}
+
+@enduml 

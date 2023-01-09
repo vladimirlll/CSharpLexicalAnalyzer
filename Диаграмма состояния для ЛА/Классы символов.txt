@@ -1,0 +1,26 @@
+Zero = 0
+One = 1
+TwoToNine = [2-9]
+HexPrefix = x|X
+Letter_Hex_Digit = [A-Fa-f]
+BinPrefix = b|B
+Letter = [a-zA-Z]
+Plus = +
+Minus = -
+Slash = /
+Asterisk = *
+Equal = =
+LessThan = <
+MoreThan = >
+SingleQuote = '
+DoubleQuote = "
+Ampersand = &
+Percent = %
+Exclamation = !
+VerticalLine = |
+Punctuator = [{}[]().,:;]
+Any = /./
+
+
+
+
