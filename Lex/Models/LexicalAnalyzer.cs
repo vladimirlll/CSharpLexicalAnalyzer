@@ -98,7 +98,7 @@ namespace Lex.Models
             transitionTable = ReadTransitionTable(transitionTableFileName);
             Tokens = new List<Token>();
             pos = 0;
-            CurrentlyRedingRowNum = 0;
+            CurrentlyRedingRowNum = 1;
             CurrentState = StartState;
             currentLexem = "";
         }
@@ -165,6 +165,8 @@ namespace Lex.Models
                 if (Program[pos] == '\n') CurrentlyRedingRowNum++;
                 int oldState = CurrentState;
                 CurrentState = transitionTable[CurrentState][(int)SC];
+                if(oldState == CurrentState || oldState == StartState)
+                    currentLexem += Program[pos];
                 if (Enum.IsDefined(typeof(FinalStates), CurrentState))
                 {
                     if(CurrentState != (int)FinalStates.Comment && CurrentState != (int)FinalStates.WSEnd)
@@ -174,14 +176,16 @@ namespace Lex.Models
                             type = TokenType.Keyword;
 
                         Tokens.Add(new Token(type, currentLexem, "Номер строки - " + CurrentlyRedingRowNum));
+
+                        if (currentLexem.Length == 1 && Program[pos] == currentLexem[0]) pos++;
                     }
                     currentLexem = "";
-                    CurrentState = 0;
+                    CurrentState = StartState;
                 }
-                else if (CurrentState < 0) throw new UnavailableTransitionException(oldState, Program[pos]);
+                else if (CurrentState < StartState) throw new UnavailableTransitionException(this);
                 else
                 {
-                    currentLexem += Program[pos];
+                    //currentLexem += Program[pos];
                     pos++;
                 }
 

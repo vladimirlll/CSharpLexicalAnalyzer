@@ -11,15 +11,23 @@ namespace Lex.Models.Exceptions.AnalyzeExceptions
         private const string MSG = "Переход при данном состоянии и данном входном символе невозможен";
         public int State { get; private set; }
         public char Symbol { get; private set; }
-        public UnavailableTransitionException(int state, char symbol) : base(MSG)
+        public string ReadingLexem { get; private set; }
+        public int PosInCode { get; private set; }
+        public int LineNum { get; private set; }
+        public UnavailableTransitionException(LexicalAnalyzer la) : base(MSG)
         {
-            State = state;
-            Symbol = symbol;
+            State = la.CurrentState;
+            Symbol = la.Program[la.pos];
+            ReadingLexem = la.currentLexem;
+            PosInCode = la.pos;
+            LineNum = la.CurrentlyRedingRowNum;
         }
 
         public override string GetMessage()
         {
-            return MSG + "\nСостояние - " + State + ", входной символ - " + Symbol;
+            return MSG + "\nСостояние - " + State + ", входной символ - " + Symbol
+                + "\nСчитанная лексема - " + ReadingLexem + ", позиция входного символа в тектсе программы" + PosInCode
+               + "\nНомер строки - " + LineNum;
         }
     }
 }
