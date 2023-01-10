@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using Lex.Models.Exceptions.SettingExceptions;
 using Lex.Models.InputSymbols;
@@ -20,11 +17,7 @@ namespace Lex.Models
         private const int START_STATE = 0;
         public int CurrentState { get; private set; }
         public int LineNum { get; private set; }
-        /*private List<int> finalStates = new List<int>()
-        {
-            2, 4, 6, 10, 
-        };
-        */
+
         private List<string> keywords = new List<string>()
         {
             "abstract", "as", "base", "bool", "break",
