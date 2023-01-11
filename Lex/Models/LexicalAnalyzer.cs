@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using Lex.Models.Exceptions.SettingExceptions;
 using Lex.Models.InputSymbols;
 using Lex.Models.Exceptions.AnalyzeExceptions;
@@ -96,6 +98,37 @@ namespace Lex.Models
             ReadingLexem = "";
         }
 
+        private SymbolClass GetSymbolClass(char c)
+        {
+            if (c == '0') return SymbolClass.Zero;
+            else if (c == '1') return SymbolClass.One;
+            else if (char.IsDigit(c) && c != '0' && c != '1') return SymbolClass.TwoToNine;
+            else if (c == 'x' || c == 'X') return SymbolClass.HexPrefix;
+            else if (c == 'b' || c == 'B') return SymbolClass.BinPrefix;
+            else if ("ABCDFabcdf".Contains(c)) return SymbolClass.LetterHexDigit;
+            else if (char.IsLetter(c)) return SymbolClass.Letter;
+            else if (c == '_') return SymbolClass.Underscore;
+            else if (c == '+') return SymbolClass.Plus;
+            else if (c == '-') return SymbolClass.Minus;
+            else if (c == '/') return SymbolClass.Slash;
+            else if (c == '*') return SymbolClass.Asterisk;
+            else if (c == '=') return SymbolClass.Equal;
+            else if (c == '<') return SymbolClass.LessThan;
+            else if (c == '>') return SymbolClass.MoreThan;
+            else if (c == '\'') return SymbolClass.SingleQuote;
+            else if (c == '\"') return SymbolClass.DoubleQuote;
+            else if (c == '&') return SymbolClass.Ampersand;
+            else if (c == '%') return SymbolClass.Percent;
+            else if (c == '!') return SymbolClass.Exclamation;
+            else if (c == '|') return SymbolClass.VerticalLine;
+            else if (c == '.') return SymbolClass.Dot;
+            else if (c == '[' || c == ']' || c == '{' || c == '}' || c == '(' || c == ')' ||
+                c == '.' || c == ',' || c == ':' || c == ';') return SymbolClass.Punctuator;
+            else if (char.IsWhiteSpace(c)) return SymbolClass.WS;
+            else return SymbolClass.Other;
+
+        }
+
         private TokenType GetTokenTypeOfCurrentState()
         {
             if(Enum.IsDefined(typeof(FinalStates), CurrentState))
@@ -149,39 +182,62 @@ namespace Lex.Models
             else throw new NotFinishStateException(this);
         }
 
-        public void Analyze()
+        public void Analyzing()
         {
             ReadingLexem = "";
-            while (pos != Program.Length)
+            pos = 0;
+            int startLexemPos = 0;
+            CurrentState = START_STATE;
+
+            while(pos != Program.Length)
             {
-                SymbolClass SC = SymbolClassHandler.GetSymbolClass(Program[pos]);
+                char symbol = Program[pos];
+                SymbolClass sc = GetSymbolClass(symbol);
+                CurrentState = transitionTable[CurrentState][(int)sc];
+
                 if (Program[pos] == '\n') LineNum++;
-                int oldState = CurrentState;
-                CurrentState = transitionTable[CurrentState][(int)SC];
-                if(oldState == CurrentState || oldState == START_STATE)
-                    ReadingLexem += Program[pos];
-                if (Enum.IsDefined(typeof(FinalStates), CurrentState))
+
+                if (CurrentState >= 0)
                 {
-                    if(CurrentState != (int)FinalStates.Comment && CurrentState != (int)FinalStates.WSEnd)
+                    if(Enum.IsDefined(typeof(FinalStates), CurrentState))
                     {
-                        TokenType type = GetTokenTypeOfCurrentState();
-                        if (CurrentState == (int)FinalStates.ID && keywords.Contains(ReadingLexem))
-                            type = TokenType.Keyword;
+                        if(CurrentState != (int)FinalStates.Comment && CurrentState != (int)FinalStates.WSEnd)
+                        {
+                            TokenType type = GetTokenTypeOfCurrentState();
+                            if (CurrentState == (int)FinalStates.ID && keywords.Contains(ReadingLexem))
+                                type = TokenType.Keyword;
 
-                        Tokens.Add(new Token(type, ReadingLexem, "Номер строки - " + LineNum));
-
-                        if (ReadingLexem.Length == 1 && Program[pos] == ReadingLexem[0]) pos++;
+                            int lexemLength = 0;
+                            if (startLexemPos == pos)
+                            {
+                                lexemLength = 1;
+                                pos++;
+                            }
+                            else lexemLength = pos - startLexemPos;
+                            Tokens.Add(new Token(type, Program.Substring(startLexemPos, lexemLength), "Номер строки - " + LineNum));
+                        }
+                        startLexemPos = pos;
+                        CurrentState = START_STATE;
+                        ReadingLexem = "";
                     }
-                    ReadingLexem = "";
-                    CurrentState = START_STATE;
+                    else
+                    {
+                        ReadingLexem += symbol;
+                        pos++;
+                    }
                 }
-                else if (CurrentState < START_STATE) throw new UnavailableTransitionException(this);
-                else
-                {
-                    pos++;
-                }
-
+                else throw new UnavailableTransitionException(this);
             }
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var token in Tokens)
+            {
+                sb.Append(token + "\n\n");
+            }
+            return sb.ToString();
         }
 
     }

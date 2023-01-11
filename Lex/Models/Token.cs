@@ -18,5 +18,11 @@ namespace Lex.Models
             Lexem = lexem;
             Attribute = attribute;
         }
+
+        public override string ToString()
+        {
+            return "Тип токена - " + Type + "\nЛексема - " + Lexem 
+                + "\nАттрибут токена - " + Attribute;
+        }
     }
 }

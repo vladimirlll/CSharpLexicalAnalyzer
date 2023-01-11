@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Lex.Models;
 using Lex.Models.Exceptions;
-using Lex.Models.Exceptions.AnalyzeExceptions;
-using Lex.Models.Exceptions.SettingExceptions;
+using Lex.Views;
 
 namespace Lex
 {
@@ -14,12 +9,13 @@ namespace Lex
     {
         static void Main(string[] args)
         {
-            int a = 10;
             try
             {
                 LexicalAnalyzer LA = new LexicalAnalyzer("test.cs", "tt.txt");
-                LA.Analyze();
-                OutTokens(LA);
+                LA.Analyzing();
+                LexicalAnalyzerViewer LAViewer = new LexicalAnalyzerViewer(LA);
+                LAViewer.ToConsole();
+                LAViewer.ToFile("tokens.txt");
             }
             catch (LexAnException laEx)
             {
