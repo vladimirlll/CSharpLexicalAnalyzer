@@ -9,27 +9,24 @@ namespace Lex
     {
         static void Main(string[] args)
         {
+            TTBuilderLA builder = new TTBuilderLA("transitions.txt");
+            builder.Analyze();
+            TTBuilderViewer viewer = new TTBuilderViewer(builder, "tt.txt");
+            viewer.View();
+
             try
             {
                 LexicalAnalyzer LA = new LexicalAnalyzer("test.cs", "tt.txt");
-                LA.Analyzing();
+                LA.Analyze();
                 LexicalAnalyzerViewer LAViewer = new LexicalAnalyzerViewer(LA);
-                LAViewer.ToConsole();
-                LAViewer.ToFile("tokens.txt");
+                LAViewer.View();
             }
             catch (LexAnException laEx)
             {
                 Console.WriteLine(laEx.GetMessage());
                 Environment.Exit(1);
             }
-        }
 
-        static void OutTokens(LexicalAnalyzer LA)
-        {
-            foreach (var token in LA.Tokens)
-            {
-                Console.WriteLine(token.Lexem);
-            }
         }
     }
 }

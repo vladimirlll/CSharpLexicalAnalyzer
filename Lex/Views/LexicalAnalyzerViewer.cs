@@ -4,7 +4,7 @@ using Lex.Models;
 
 namespace Lex.Views
 {
-    class LexicalAnalyzerViewer
+    class LexicalAnalyzerViewer : AbstractViewer
     {
         private LexicalAnalyzer LA;
 
@@ -13,17 +13,9 @@ namespace Lex.Views
             this.LA = LA;
         }
 
-        public void ToConsole()
+        public override void View()
         {
             Console.WriteLine(LA);
-        }
-
-        public void ToFile(string fName)
-        {
-            using (StreamWriter writer = new StreamWriter(fName, false))
-            {
-                writer.Write(LA);
-            }
         }
     }
 }

@@ -6,6 +6,8 @@ using System.Text;
 using Lex.Models.Exceptions.SettingExceptions;
 using Lex.Models.InputSymbols;
 using Lex.Models.Exceptions.AnalyzeExceptions;
+using Lex.Models.States;
+using Lex.Models.Tokens;
 
 namespace Lex.Models
 {
@@ -87,15 +89,25 @@ namespace Lex.Models
             }
         }
 
-        public LexicalAnalyzer(string codeFileName, string transitionTableFileName)
+        private LexicalAnalyzer()
         {
-            Program = ReadCode(codeFileName);
-            transitionTable = ReadTransitionTable(transitionTableFileName);
             Tokens = new List<Token>();
             pos = 0;
             LineNum = 1;
             CurrentState = START_STATE;
             ReadingLexem = "";
+        }
+
+        public LexicalAnalyzer(string codeFileName, string transitionTableFileName) : this()
+        {
+            Program = ReadCode(codeFileName);
+            transitionTable = ReadTransitionTable(transitionTableFileName);
+        }
+
+        public LexicalAnalyzer(string codeFileName, List<List<int>> tt) : this()
+        {
+            Program = ReadCode(codeFileName);
+            transitionTable = tt;
         }
 
         private SymbolClass GetSymbolClass(char c)
@@ -115,7 +127,7 @@ namespace Lex.Models
             else if (c == '=') return SymbolClass.Equal;
             else if (c == '<') return SymbolClass.LessThan;
             else if (c == '>') return SymbolClass.MoreThan;
-            else if (c == '\'') return SymbolClass.SingleQuote;
+            else if ("'".Contains(c)) return SymbolClass.SingleQuote;
             else if (c == '\"') return SymbolClass.DoubleQuote;
             else if (c == '&') return SymbolClass.Ampersand;
             else if (c == '%') return SymbolClass.Percent;
@@ -125,105 +137,117 @@ namespace Lex.Models
             else if (c == '[' || c == ']' || c == '{' || c == '}' || c == '(' || c == ')' ||
                 c == '.' || c == ',' || c == ':' || c == ';') return SymbolClass.Punctuator;
             else if (char.IsWhiteSpace(c)) return SymbolClass.WS;
+            else if (c == '\\') return SymbolClass.Backslash;
             else return SymbolClass.Other;
 
         }
 
         private TokenType GetTokenTypeOfCurrentState()
         {
-            if(Enum.IsDefined(typeof(FinalStates), CurrentState))
+            switch (CurrentState)
             {
-                switch (CurrentState)
-                {
-                    case (int)FinalStates.ID:
-                        return TokenType.Identifier;
+                case (int)PreviousFinalStates.ID:
+                    return TokenType.Identifier;
 
-                    case (int)FinalStates.Div:
-                    case (int)FinalStates.Increment:
-                    case (int)FinalStates.PlusAssign:
-                    case (int)FinalStates.Plus:
-                    case (int)FinalStates.Decrement:
-                    case (int)FinalStates.MinusAssign:
-                    case (int)FinalStates.Minus:
-                    case (int)FinalStates.Assign:
-                    case (int)FinalStates.Equal:
-                    case (int)FinalStates.Mul:
-                    case (int)FinalStates.MulAssign:
-                    case (int)FinalStates.DivAssign:
-                    case (int)FinalStates.ShiftLeft:
-                    case (int)FinalStates.LessOrEqual:
-                    case (int)FinalStates.LessThan:
-                    case (int)FinalStates.MoreThan:
-                    case (int)FinalStates.ShiftRight:
-                    case (int)FinalStates.MoreOrEqual:
-                    case (int)FinalStates.LogicalOrBitMult:
-                    case (int)FinalStates.LogicalOrBitSum:
-                    case (int)FinalStates.Negative:
-                        return TokenType.Operator;
+                case (int)PreviousFinalStates.Div:
+                case (int)FinalStates.Increment:
+                case (int)FinalStates.PlusAssign:
+                case (int)PreviousFinalStates.Plus:
+                case (int)FinalStates.Decrement:
+                case (int)FinalStates.MinusAssign:
+                case (int)PreviousFinalStates.Minus:
+                case (int)PreviousFinalStates.Assign:
+                case (int)FinalStates.Equal:
+                case (int)PreviousFinalStates.Mul:
+                case (int)FinalStates.MulAssign:
+                case (int)FinalStates.DivAssign:
+                case (int)FinalStates.ShiftLeft:
+                case (int)FinalStates.LessOrEqual:
+                case (int)PreviousFinalStates.LessThan:
+                case (int)PreviousFinalStates.MoreThan:
+                case (int)FinalStates.ShiftRight:
+                case (int)FinalStates.MoreOrEqual:
+                case (int)FinalStates.BitMultAssign:
+                case (int)FinalStates.LogicalMult:
+                case (int)FinalStates.BitOrAssign:
+                case (int)FinalStates.LogicalOr:
+                case (int)FinalStates.NegativeAssign:
+                case (int)PreviousFinalStates.Negative:
+                case (int)PreviousFinalStates.BitMul:
+                case (int)PreviousFinalStates.BitOr:
+                    return TokenType.Operator;
 
-                    case (int)FinalStates.StringLiteral:
-                        return TokenType.StringLiteral;
-                    case (int)FinalStates.CharLiteral:
-                        return TokenType.CharacterLiteral;
-                    case (int)FinalStates.DecimalIntLiteral:
-                    case (int)FinalStates.BinIntLiteral:
-                    case (int)FinalStates.HexIntLiteral:
-                        return TokenType.IntegerLiteral;
-                    case (int)FinalStates.RealLiteral:
-                        return TokenType.RealLiteral;
+                case (int)FinalStates.StringLiteral:
+                    return TokenType.StringLiteral;
+                case (int)FinalStates.CharLiteral:
+                    return TokenType.CharacterLiteral;
+                case (int)PreviousFinalStates.DecimalIntLiteral:
+                case (int)PreviousFinalStates.BinIntLiteral:
+                case (int)PreviousFinalStates.HexIntLiteral:
+                case (int)PreviousFinalStates.ZeroDecimalIntLiteral:
+                    return TokenType.IntegerLiteral;
+                case (int)PreviousFinalStates.RealLiteral:
+                    return TokenType.RealLiteral;
 
-                    case (int)FinalStates.Punctuator:
-                        return TokenType.Punctuator;
+                case (int)FinalStates.Punctuator:
+                    return TokenType.Punctuator;
 
-                    default:
-                        throw new NotFinishStateException(this);
-                }
+                default:
+                    throw new NotFinishStateException(this);
             }
-            else throw new NotFinishStateException(this);
         }
 
-        public void Analyzing()
+        public void Analyze()
         {
             ReadingLexem = "";
             pos = 0;
             int startLexemPos = 0;
+            int prevState = -1;
             CurrentState = START_STATE;
 
-            while(pos != Program.Length)
+            for (; pos != Program.Length; pos++)
             {
                 char symbol = Program[pos];
                 SymbolClass sc = GetSymbolClass(symbol);
+                prevState = CurrentState;
                 CurrentState = transitionTable[CurrentState][(int)sc];
 
-                if (Program[pos] == '\n') LineNum++;
+                if (symbol == '\n') LineNum++;
 
                 if (CurrentState >= 0)
                 {
-                    if(Enum.IsDefined(typeof(FinalStates), CurrentState))
+                    if (Enum.IsDefined(typeof(FinalStates), CurrentState))
                     {
-                        if(CurrentState != (int)FinalStates.Comment && CurrentState != (int)FinalStates.WSEnd)
+                        if (CurrentState != (int)FinalStates.Comment
+                            && !(CurrentState == (int)FinalStates.CheckPreviousState
+                            && prevState == (int)PreviousFinalStates.WSEnd))
                         {
-                            TokenType type = GetTokenTypeOfCurrentState();
-                            if (CurrentState == (int)FinalStates.ID && keywords.Contains(ReadingLexem))
-                                type = TokenType.Keyword;
+                            if (CurrentState == (int)FinalStates.CheckPreviousState)
+                            {
+                                CurrentState = prevState;
+                                pos--;
+                            }
 
                             int lexemLength = 0;
-                            if (startLexemPos == pos)
-                            {
-                                lexemLength = 1;
-                                pos++;
-                            }
-                            else lexemLength = pos - startLexemPos;
-                            Tokens.Add(new Token(type, Program.Substring(startLexemPos, lexemLength), "Номер строки - " + LineNum));
+                            lexemLength = pos - startLexemPos + 1;
+
+                            ReadingLexem = Program.Substring(startLexemPos, lexemLength);
+
+                            TokenType type = GetTokenTypeOfCurrentState();
+                            if (CurrentState == (int)PreviousFinalStates.ID && keywords.Contains(ReadingLexem))
+                                type = TokenType.Keyword;
+
+                            Tokens.Add(new Token(type, ReadingLexem, "Номер строки - " + LineNum));
                         }
-                        startLexemPos = pos;
+
+                        if (CurrentState != (int)FinalStates.CheckPreviousState)
+                            startLexemPos = pos + 1;
+                        else
+                        {
+                            startLexemPos = pos;
+                            pos--;
+                        }
                         CurrentState = START_STATE;
-                        ReadingLexem = "";
-                    }
-                    else
-                    {
-                        ReadingLexem += symbol;
-                        pos++;
                     }
                 }
                 else throw new UnavailableTransitionException(this);
