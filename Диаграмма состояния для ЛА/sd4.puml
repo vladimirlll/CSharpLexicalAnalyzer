@@ -2,8 +2,8 @@
 
 state "S-4" as Integer
 state "S-5" as Real 
-Integer : Введено целое число
-Real : Введено дробное число
+Integer : F: Введено целое число
+Real : F: Введено дробное число
 
 [*] -left-> S29 : 0
 S29 --> S30 : 1|2-9

@@ -6,16 +6,16 @@ Operator : F: Введен оператор
 [*] -right-> S38 : &
 S38 -up-> S39 : =
 S38 -up-> S40 : &
-S39 : F: ОП &=
+S39 : ОП &=
 S38 : ОП &
-S40 : F: ОП &&
+S40 : ОП &&
 S38 -up-> Operator : [^&=]
 S39 -up-> Operator : Любой символ
 S40 -up-> Operator : Любой символ
 
 [*] -left-> S44 : !
 S44 -down-> S45 : =
-S45 : F: ОП !=
+S45 : ОП !=
 S44 : ОП !
 S44 -up-> Operator : [^=]
 S45 -up-> Operator : Любой символ

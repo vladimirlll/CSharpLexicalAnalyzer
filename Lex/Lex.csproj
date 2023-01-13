@@ -47,14 +47,12 @@
     <Compile Include="Models\Exceptions\AnalyzeExceptions\TokenTypeIsNotDefinedException.cs" />
     <Compile Include="Models\Exceptions\AnalyzeExceptions\UnavailableTransitionException.cs" />
     <Compile Include="Models\States\BuilderFinalState.cs" />
-    <Compile Include="Models\States\DefinitelyFinalStates.cs" />
     <Compile Include="Models\InputSymbols\SymbolClass.cs" />
     <Compile Include="Models\Exceptions\LexAnException.cs" />
     <Compile Include="Models\Exceptions\SettingExceptions\CodeReadingException.cs" />
     <Compile Include="Models\Exceptions\SettingExceptions\TransitionTableReadingException.cs" />
     <Compile Include="Models\InputSymbols\TTBuilderSymbolClass.cs" />
     <Compile Include="Models\LexicalAnalyzer.cs" />
-    <Compile Include="Models\States\NotDefinitelyFinalStates.cs" />
     <Compile Include="Models\Tokens\Token.cs" />
     <Compile Include="Models\Tokens\TokenType.cs" />
     <Compile Include="Program.cs" />
