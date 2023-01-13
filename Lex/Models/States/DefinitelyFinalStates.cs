@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace Lex.Models.States
 {
     /*
-     * Реальные финальные состояния, после перехода в которые нужно обрабатывать
+     * Однозначно финальные состояния, после перехода в которые нужно обрабатывать
      * образованную лексему и переходить в начальное состояние.
-     * FinalState.CheckPreviousState - индикатор того, что мы считали лексему, 
+     * DefinitelyFinalStates.CheckPreviousState - индикатор того, что мы считали лексему, 
      * а для определения типа токена нужно просмотреть предыдущее состояние
     */
-    enum FinalStates
+    enum DefinitelyFinalStates
     {
         StringLiteral = 4,
         CheckPreviousState = 6,

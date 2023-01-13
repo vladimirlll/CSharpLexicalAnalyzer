@@ -15,6 +15,6 @@ namespace Lex.Models.Tokens
         CharacterLiteral,
         StringLiteral,
         Operator,
-        Punctuator
+        PunctuatorOrSeparator
     }
 }

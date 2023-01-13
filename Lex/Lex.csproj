@@ -43,23 +43,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ee.cs" />
     <Compile Include="Models\Exceptions\AnalyzeExceptions\NotFinishStateException.cs" />
     <Compile Include="Models\Exceptions\AnalyzeExceptions\UnavailableTransitionException.cs" />
     <Compile Include="Models\States\BuilderFinalState.cs" />
-    <Compile Include="Models\States\FinalState.cs" />
+    <Compile Include="Models\States\DefinitelyFinalStates.cs" />
     <Compile Include="Models\InputSymbols\SymbolClass.cs" />
     <Compile Include="Models\Exceptions\LexAnException.cs" />
     <Compile Include="Models\Exceptions\SettingExceptions\CodeReadingException.cs" />
     <Compile Include="Models\Exceptions\SettingExceptions\TransitionTableReadingException.cs" />
     <Compile Include="Models\InputSymbols\TTBuilderSymbolClass.cs" />
     <Compile Include="Models\LexicalAnalyzer.cs" />
-    <Compile Include="Models\States\PreviousFinalState.cs" />
+    <Compile Include="Models\States\NotDefinitelyFinalStates.cs" />
     <Compile Include="Models\Tokens\Token.cs" />
     <Compile Include="Models\Tokens\TokenType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TTBuilderLA.cs" />
+    <Compile Include="Models\TTBuilderLA.cs" />
     <Compile Include="Views\AbstractViewer.cs" />
     <Compile Include="Views\LexicalAnalyzerViewer.cs" />
     <Compile Include="Views\TTBuilderViewer.cs" />

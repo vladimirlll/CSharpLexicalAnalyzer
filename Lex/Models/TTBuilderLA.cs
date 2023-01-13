@@ -8,7 +8,7 @@ using Lex.Models.InputSymbols;
 using Lex.Models.Exceptions.AnalyzeExceptions;
 using Lex.Models.States;
 
-namespace Lex
+namespace Lex.Models
 {
     class TTBuilderLA
     {
@@ -61,7 +61,6 @@ namespace Lex
                     TT[i].Add(-1);
             }
 
-            int startLexemPos = 0;
             int pos = 0;
             state = 0;
 
@@ -74,14 +73,9 @@ namespace Lex
                 if (state >= 0)
                 {
                     if (Enum.IsDefined(typeof(BuilderFinalState), state))
-                    {
-                        ProcessState(state, startLexemPos, pos);
-                        startLexemPos = ++pos;
-                    }
-                    else
-                    {
-                        pos++;
-                    }
+                        ProcessState(pos);
+
+                    pos++;
                 }
                 else throw new Exception("Переход невозможен");
             }
@@ -101,7 +95,7 @@ namespace Lex
             else throw new Exception("Класс для символа " + symbol + " неизвестен");
         }
 
-        private void ProcessState(int state, int lexemStartPos, int currentPos)
+        private void ProcessState(int currentPos)
         {
             switch (state)
             {
@@ -118,7 +112,6 @@ namespace Lex
                     currentSymbolClasses.Clear();
                     currentStartState = -1;
                     currentEndState = -1;
-                    state = 0;
                     break;
                 case 12:
                     for (int i = 0; i < symbolClassesCount; i++) currentSymbolClasses.Add(i);

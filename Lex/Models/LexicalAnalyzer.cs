@@ -15,11 +15,12 @@ namespace Lex.Models
     {
         public string Program { get; private set; }
         public List<Token> Tokens { get; private set; }
-        public string ReadingLexem { get; private set; }
+        public string LastProcessedLexem { get; private set; }
         private List<List<int>> transitionTable;
         public int pos { get; private set; }
         private const int START_STATE = 0;
         public int CurrentState { get; private set; }
+        public int PrevState { get; private set; }
         public int LineNum { get; private set; }
 
         private List<string> keywords = new List<string>()
@@ -95,7 +96,8 @@ namespace Lex.Models
             pos = 0;
             LineNum = 1;
             CurrentState = START_STATE;
-            ReadingLexem = "";
+            PrevState = -1;
+            LastProcessedLexem = "";
         }
 
         public LexicalAnalyzer(string codeFileName, string transitionTableFileName) : this()
@@ -146,51 +148,51 @@ namespace Lex.Models
         {
             switch (CurrentState)
             {
-                case (int)PreviousFinalStates.ID:
+                case (int)NotDefinitelyFinalStates.ID:
                     return TokenType.Identifier;
 
-                case (int)PreviousFinalStates.Div:
-                case (int)FinalStates.Increment:
-                case (int)FinalStates.PlusAssign:
-                case (int)PreviousFinalStates.Plus:
-                case (int)FinalStates.Decrement:
-                case (int)FinalStates.MinusAssign:
-                case (int)PreviousFinalStates.Minus:
-                case (int)PreviousFinalStates.Assign:
-                case (int)FinalStates.Equal:
-                case (int)PreviousFinalStates.Mul:
-                case (int)FinalStates.MulAssign:
-                case (int)FinalStates.DivAssign:
-                case (int)FinalStates.ShiftLeft:
-                case (int)FinalStates.LessOrEqual:
-                case (int)PreviousFinalStates.LessThan:
-                case (int)PreviousFinalStates.MoreThan:
-                case (int)FinalStates.ShiftRight:
-                case (int)FinalStates.MoreOrEqual:
-                case (int)FinalStates.BitMultAssign:
-                case (int)FinalStates.LogicalMult:
-                case (int)FinalStates.BitOrAssign:
-                case (int)FinalStates.LogicalOr:
-                case (int)FinalStates.NegativeAssign:
-                case (int)PreviousFinalStates.Negative:
-                case (int)PreviousFinalStates.BitMul:
-                case (int)PreviousFinalStates.BitOr:
+                case (int)NotDefinitelyFinalStates.Div:
+                case (int)DefinitelyFinalStates.Increment:
+                case (int)DefinitelyFinalStates.PlusAssign:
+                case (int)NotDefinitelyFinalStates.Plus:
+                case (int)DefinitelyFinalStates.Decrement:
+                case (int)DefinitelyFinalStates.MinusAssign:
+                case (int)NotDefinitelyFinalStates.Minus:
+                case (int)NotDefinitelyFinalStates.Assign:
+                case (int)DefinitelyFinalStates.Equal:
+                case (int)NotDefinitelyFinalStates.Mul:
+                case (int)DefinitelyFinalStates.MulAssign:
+                case (int)DefinitelyFinalStates.DivAssign:
+                case (int)DefinitelyFinalStates.ShiftLeft:
+                case (int)DefinitelyFinalStates.LessOrEqual:
+                case (int)NotDefinitelyFinalStates.LessThan:
+                case (int)NotDefinitelyFinalStates.MoreThan:
+                case (int)DefinitelyFinalStates.ShiftRight:
+                case (int)DefinitelyFinalStates.MoreOrEqual:
+                case (int)DefinitelyFinalStates.BitMultAssign:
+                case (int)DefinitelyFinalStates.LogicalMult:
+                case (int)DefinitelyFinalStates.BitOrAssign:
+                case (int)DefinitelyFinalStates.LogicalOr:
+                case (int)DefinitelyFinalStates.NegativeAssign:
+                case (int)NotDefinitelyFinalStates.Negative:
+                case (int)NotDefinitelyFinalStates.BitMul:
+                case (int)NotDefinitelyFinalStates.BitOr:
                     return TokenType.Operator;
 
-                case (int)FinalStates.StringLiteral:
+                case (int)DefinitelyFinalStates.StringLiteral:
                     return TokenType.StringLiteral;
-                case (int)FinalStates.CharLiteral:
+                case (int)DefinitelyFinalStates.CharLiteral:
                     return TokenType.CharacterLiteral;
-                case (int)PreviousFinalStates.DecimalIntLiteral:
-                case (int)PreviousFinalStates.BinIntLiteral:
-                case (int)PreviousFinalStates.HexIntLiteral:
-                case (int)PreviousFinalStates.ZeroDecimalIntLiteral:
+                case (int)NotDefinitelyFinalStates.DecimalIntLiteral:
+                case (int)NotDefinitelyFinalStates.BinIntLiteral:
+                case (int)NotDefinitelyFinalStates.HexIntLiteral:
+                case (int)NotDefinitelyFinalStates.ZeroDecimalIntLiteral:
                     return TokenType.IntegerLiteral;
-                case (int)PreviousFinalStates.RealLiteral:
+                case (int)NotDefinitelyFinalStates.RealLiteral:
                     return TokenType.RealLiteral;
 
-                case (int)FinalStates.Punctuator:
-                    return TokenType.Punctuator;
+                case (int)DefinitelyFinalStates.Punctuator:
+                    return TokenType.PunctuatorOrSeparator;
 
                 default:
                     throw new NotFinishStateException(this);
@@ -199,48 +201,48 @@ namespace Lex.Models
 
         public void Analyze()
         {
-            ReadingLexem = "";
+            LastProcessedLexem = "";
             pos = 0;
             int startLexemPos = 0;
-            int prevState = -1;
+            PrevState = -1;
             CurrentState = START_STATE;
 
             for (; pos != Program.Length; pos++)
             {
                 char symbol = Program[pos];
                 SymbolClass sc = GetSymbolClass(symbol);
-                prevState = CurrentState;
+                PrevState = CurrentState;
                 CurrentState = transitionTable[CurrentState][(int)sc];
 
                 if (symbol == '\n') LineNum++;
 
                 if (CurrentState >= 0)
                 {
-                    if (Enum.IsDefined(typeof(FinalStates), CurrentState))
+                    if (Enum.IsDefined(typeof(DefinitelyFinalStates), CurrentState))
                     {
-                        if (CurrentState != (int)FinalStates.Comment
-                            && !(CurrentState == (int)FinalStates.CheckPreviousState
-                            && prevState == (int)PreviousFinalStates.WSEnd))
+                        if (CurrentState != (int)DefinitelyFinalStates.Comment
+                            && !(CurrentState == (int)DefinitelyFinalStates.CheckPreviousState
+                            && PrevState == (int)NotDefinitelyFinalStates.WSEnd))
                         {
-                            if (CurrentState == (int)FinalStates.CheckPreviousState)
+                            if (CurrentState == (int)DefinitelyFinalStates.CheckPreviousState)
                             {
-                                CurrentState = prevState;
+                                CurrentState = PrevState;
                                 pos--;
                             }
 
                             int lexemLength = 0;
                             lexemLength = pos - startLexemPos + 1;
 
-                            ReadingLexem = Program.Substring(startLexemPos, lexemLength);
+                            LastProcessedLexem = Program.Substring(startLexemPos, lexemLength);
 
                             TokenType type = GetTokenTypeOfCurrentState();
-                            if (CurrentState == (int)PreviousFinalStates.ID && keywords.Contains(ReadingLexem))
+                            if (CurrentState == (int)NotDefinitelyFinalStates.ID && keywords.Contains(LastProcessedLexem))
                                 type = TokenType.Keyword;
 
-                            Tokens.Add(new Token(type, ReadingLexem, "Номер строки - " + LineNum));
+                            Tokens.Add(new Token(type, LastProcessedLexem, "Номер строки - " + LineNum));
                         }
 
-                        if (CurrentState != (int)FinalStates.CheckPreviousState)
+                        if (CurrentState != (int)DefinitelyFinalStates.CheckPreviousState)
                             startLexemPos = pos + 1;
                         else
                         {

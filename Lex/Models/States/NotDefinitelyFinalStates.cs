@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace Lex.Models.States
 {
     /*
-     * Состояния из которых есть переход в состояние FinalState.CheckPreviousState
+     * Состояния из которых есть переход в состояние DefinitelyFinalStates.CheckPreviousState
      * Все эти состояния могут являться финальными, но из них возможен переход в другие
      * состояния, поэтому для однозначного определения, что состояние является финальным,
-     * любое из состояний PreviousFinalStates имеет переход в FinalState.CheckPreviousState
+     * любое из состояний PreviousFinalStates имеет переход в DefinitelyFinalStates.CheckPreviousState
     */
-    enum PreviousFinalStates
+    enum NotDefinitelyFinalStates
     {
         ID = 1,
         Div = 5,
