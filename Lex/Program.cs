@@ -17,7 +17,7 @@ namespace Lex
             try
             {
                 LexicalAnalyzer LA = new LexicalAnalyzer("test.cs", "tt.txt");
-                LA.Analyzing();
+                LA.Analyze();
                 LexicalAnalyzerViewer LAViewer = new LexicalAnalyzerViewer(LA);
                 LAViewer.View();
             }

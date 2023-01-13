@@ -185,7 +185,7 @@ namespace Lex.Models
 
         }
 
-        public void Analyzing()
+        public void Analyze()
         {
             LastProcessedLexem = "";
             pos = 0;
