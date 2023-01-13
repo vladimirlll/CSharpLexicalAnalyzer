@@ -8,13 +8,15 @@ namespace Lex.Models.Tokens
 {
     enum TokenType
     {
-        Identifier,
+        Identifier = 2,
         Keyword,
         IntegerLiteral,
         RealLiteral,
         CharacterLiteral,
         StringLiteral,
         Operator,
-        PunctuatorOrSeparator
+        PunctuatorOrSeparator,
+        Comment,
+        WS
     }
 }

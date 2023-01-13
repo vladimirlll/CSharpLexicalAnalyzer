@@ -1,26 +1,33 @@
 @startuml "sd3"
 
+state "S-8" as Operator
+state "S-11" as WS
+Operator : F: Введен оператор
+WS : F: Введены вайтспейсы
+S22 : WS
+S23 : ОП <
+S24 : ОП <<
+S25 : ОП <=
+S26 : ОП >
+S27 : F: ОП >>
+S28 : F: ОП >=
+
 [*] -right-> S22 : [WS]
 S22 --> S22 : [WS]
-S22 : WS
-S22 -up-> S6 : [^WS]
+S22 -up-> WS : [^WS]
 
 [*] -up-> S23 : <
-S23 -up-> S6 : [^<=]
+S23 -up-> Operator : [^<=]
 S23 -up-> S24 : <
-S24 : F: ОП <<
+S24 -right-> Operator : Любой символ
 S23 -up-> S25 : =
-S25 : F: ОП <=
-S23 : ОП <
+S25 -right-> Operator : Любой символ
 
 [*] --> S26 : >
-S26 -up-> S6 : [^>=]
+S26 -up-> Operator : [^>=]
 S26 --> S27 : >
-S27 : F: ОП >>
+S27 -up-> Operator : Любой символ
 S26 --> S28 : =
-S28 : F: ОП >=
-S26 : ОП >
-
-S6 : F: Смотреть\nпредыдущее\nсостояние
+S28 -up-> Operator : Любой символ
 
 @enduml

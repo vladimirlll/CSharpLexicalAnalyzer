@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -159,8 +159,8 @@ namespace Lex.Models
 
                 if (symbol == '\n') LineNum++;
 
-                if(CurrentState == - 1) throw new UnavailableTransitionException(this);
-                else if(CurrentState < - 1)
+                if (CurrentState == -1) throw new UnavailableTransitionException(this);
+                else if (CurrentState < -1)
                 {
                     CurrentState = -CurrentState;
                     TokenType type;
@@ -170,7 +170,7 @@ namespace Lex.Models
                     }
                     catch (Exception) { throw new TokenTypeIsNotDefinedException(this); }
 
-                    if(type != TokenType.Comment && type != TokenType.WS)
+                    if (type != TokenType.Comment && type != TokenType.WS)
                     {
                         int lexemLength = pos - startLexemPos;
 
@@ -178,7 +178,7 @@ namespace Lex.Models
                         if (type == TokenType.Identifier && keywords.Contains(LastProcessedLexem))
                             type = TokenType.Keyword;
 
-                        Tokens.Add(new Token(type, LastProcessedLexem, "ÐÐ¾Ð¼ÐµÑ€ ÑÑ‚Ñ€Ð¾ÐºÐ¸ - " + LineNum));
+                        Tokens.Add(new Token(type, LastProcessedLexem, "Íîìåð ñòðîêè - " + LineNum));
                     }
                     startLexemPos = pos;
                     pos--;

@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Exceptions\AnalyzeExceptions\NotFinishStateException.cs" />
+    <Compile Include="Models\Exceptions\AnalyzeExceptions\TokenTypeIsNotDefinedException.cs" />
     <Compile Include="Models\Exceptions\AnalyzeExceptions\UnavailableTransitionException.cs" />
     <Compile Include="Models\States\BuilderFinalState.cs" />
     <Compile Include="Models\States\DefinitelyFinalStates.cs" />

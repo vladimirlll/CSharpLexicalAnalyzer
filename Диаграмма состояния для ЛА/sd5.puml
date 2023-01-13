@@ -1,19 +1,23 @@
 @startuml "sd5"
 
+state "S-8" as Operator
+Operator : F: Введен оператор
+
 [*] -right-> S38 : &
 S38 -up-> S39 : =
 S38 -up-> S40 : &
 S39 : F: ОП &=
 S38 : ОП &
 S40 : F: ОП &&
-S38 -down-> S6 : [^&=]
+S38 -up-> Operator : [^&=]
+S39 -up-> Operator : Любой символ
+S40 -up-> Operator : Любой символ
 
 [*] -left-> S44 : !
-S44 -left-> S45 : =
+S44 -down-> S45 : =
 S45 : F: ОП !=
 S44 : ОП !
-S44 -down-> S6 : [^=]
-
-S6 : F: Смотреть\nпредыдущее\nсостояние
+S44 -up-> Operator : [^=]
+S45 -up-> Operator : Любой символ
 
 @enduml

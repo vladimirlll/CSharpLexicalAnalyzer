@@ -1,31 +1,42 @@
 @startuml "sd1"
 
+state "S-2" as Identifier
+state "S-7" as StringLiteral
+state "S-8" as Operator
+state "S-10" as Comment
+Identifier : F: Введен идентификатор
+StringLiteral : F: Введен\nстрочный литерал
+Operator : F: Введен оператор
+Comment : F: Введен коммент
+
 [*] -down-> S1 : [a-zA-Z]
 [*] -left-> S2 : _
 S2 -down-> S1 : [a-zA-Z_0-9]
 S1 -left-> S1 : [a-zA-Z_0-9]
-S1 -left-> S6 : [^a-zA-Z_0-9]
+S1 -up-> Identifier : [^a-zA-Z_0-9]
 S1 : Идентификатор
-S6 : F: Смотреть\nпредыдущее\nсостояние
 
 [*] -right-> S3 : "
 S3 -right-> S3 : [^"]
 S3 -down-> S4 : "
-S4 : F: Строчный литерал
+S4 -right-> StringLiteral : Любой символ
+S4 : Строчный литерал
 
 [*] -up-> S5 : /
 S5 -up-> S7 : *
 S5 : ОП /
-S5 -left-> S6 : [^*=]
+S5 -right-> Operator : [^*=]
 S5 -right-> S8 : =
 
-S8 : F: ОП /=
+S8 -right-> Operator : Любой символ
+S8 : ОП /=
 
 S7 -up-> S7 : [^*]
 S7 -up-> S9 : *
 S9 -down-> S7 : [^/]
 S9 -left-> S10 : /
-S10 : F: Коммент
+S10 : Коммент
+S10 -left-> Comment : Любой символ
 
 
 @enduml
